@@ -1,0 +1,46 @@
+<%- include('../partials/header'); -%>
+
+<form action="/edit_profile">
+  <h2>Edit profile</h2>
+  <label for="username">Username</label>
+  <input type="text" name="username" required value="<%= user.username %>"/>
+  <div class="username error"></div>
+  <input hidden name="_id" value= <%= user._id %> >
+  
+  <button>Edit</button>
+</form>
+
+<%- include('../partials/footer'); -%>
+
+<script>
+  const form = document.querySelector('form');
+  const usernameError = document.querySelector('.username.error');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    // reset errors
+    usernameError.textContent = '';
+
+    // get values
+    const username = form.username.value;
+    const _id = form._id.value;
+
+    try {
+      const res = await fetch('/edit_profile', { 
+        method: 'POST', 
+        body: JSON.stringify({ _id, username }),
+        headers: {'Content-Type': 'application/json'}
+      });
+      const data = await res.json();
+      if (data.errors) {
+        usernameError.textContent = data.errors.username;
+      }
+      //window.location.reload(true);
+    }
+    catch (err) {
+      console.log(err);
+    }
+
+  });
+</script>
